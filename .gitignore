@@ -1,5 +1,6 @@
 hw01/target/
 dependency-reduced-pom.xml
+target/
 
 ### STS ###
 .apt_generated
