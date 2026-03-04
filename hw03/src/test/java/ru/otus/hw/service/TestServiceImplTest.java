@@ -65,15 +65,15 @@ class TestServiceImplTest {
         inOrder.verify(ioService).printLine("");
         inOrder.verify(csvQuestionDao, times(1)).findAll();
         inOrder.verify(ioService).printLine(eq("Сколько будет 2+2?"));
-        inOrder.verify(ioService).printLine(eq("Answer options:"));
-        inOrder.verify(ioService).printFormattedLine(eq("Option %d: %s"), eq(1), eq("3"));
-        inOrder.verify(ioService).printFormattedLine(eq("Option %d: %s"), eq(2), eq("4"));
+        inOrder.verify(ioService).printLineLocalized(eq("TestService.answer.the.answer.options"));
+        inOrder.verify(ioService).printFormattedLineLocalized(eq("TestService.answer.the.option"), eq(1), eq("3"));
+        inOrder.verify(ioService).printFormattedLineLocalized(eq("TestService.answer.the.option"), eq(2), eq("4"));
         inOrder.verify(ioService, times(1)).readIntForRange(eq(1), eq(2), eq("The value entered is not included in the sample estimates."));
 
         inOrder.verify(ioService).printLine(eq("Столица России?"));
-        inOrder.verify(ioService).printLine(eq("Answer options:"));
-        inOrder.verify(ioService).printFormattedLine(eq("Option %d: %s"), eq(1), eq("Москва"));
-        inOrder.verify(ioService).printFormattedLine(eq("Option %d: %s"), eq(2), eq("Санкт-Петербург"));
+        inOrder.verify(ioService).printLineLocalized(eq("TestService.answer.the.answer.options"));
+        inOrder.verify(ioService).printFormattedLineLocalized(eq("TestService.answer.the.option"), eq(1), eq("Москва"));
+        inOrder.verify(ioService).printFormattedLineLocalized(eq("TestService.answer.the.option"), eq(2), eq("Санкт-Петербург"));
         inOrder.verify(ioService, times(1)).readIntForRange(eq(1), eq(2), eq("The value entered is not included in the sample estimates."));
         verifyNoMoreInteractions(ioService, csvQuestionDao);
     }

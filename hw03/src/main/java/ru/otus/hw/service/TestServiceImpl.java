@@ -42,10 +42,10 @@ public class TestServiceImpl implements TestService {
 
     private void printQuestion(Question question) {
         ioService.printLine(question.text());
-        ioService.printLine("Answer options:");
+        ioService.printLineLocalized("TestService.answer.the.answer.options");
         IntStream.range(0, question.answers().size())
-                .forEach(i -> ioService.printFormattedLine(
-                        "Option %d: %s",
+                .forEach(i -> ioService.printFormattedLineLocalized(
+                        "TestService.answer.the.option",
                         i + 1,
                         question.answers().get(i).text()
                 ));
