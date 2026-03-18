@@ -100,22 +100,21 @@ public class JdbcBookRepository implements BookRepository {
                                 List<BookGenreRelation> relations) {
         booksWithoutGenres.forEach(book -> {
             List<Genre> genreList = new ArrayList<>();
-            for (int i = 0; i < relations.size(); i++) {
-                if (relations.get(i).bookId == book.getId()) {
-                    genreList = getGenres(genres, relations.get(i), genreList);
+            for (BookGenreRelation relation : relations) {
+                if (relation.bookId == book.getId()) {
+                    fillGenreList(genres, relation, genreList);
                 }
             }
             book.setGenres(genreList);
         });
     }
 
-    private List<Genre> getGenres(List<Genre> genres, BookGenreRelation relation, List<Genre> genreList) {
-        for (int j = 0; j < genres.size(); j++) {
-            if (genres.get(j).getId() == relation.genreId) {
-                genreList.add(genres.get(j));
+    private void fillGenreList(List<Genre> genres, BookGenreRelation relation, List<Genre> genreList) {
+        for (Genre genre : genres) {
+            if (genre.getId() == relation.genreId) {
+                genreList.add(genre);
             }
         }
-        return genreList;
     }
 
     private Book insert(Book book) {
@@ -147,10 +146,11 @@ public class JdbcBookRepository implements BookRepository {
         int count = namedParameterJdbcOperations.update(sql, params);
 
         if (count <= 0) {
-            throw new EntityNotFoundException("Book with id %d not found");
+            throw new EntityNotFoundException("Book with id %d not found".formatted(book.getId()));
         }
         var bookById = findById(book.getId());
-        removeGenresRelationsFor(bookById.orElseThrow(() -> new EntityNotFoundException("Book with id %d not found")));
+        removeGenresRelationsFor(bookById.orElseThrow(() ->
+                new EntityNotFoundException("Book with id %d not found".formatted(book.getId()))));
         batchInsertGenresRelationsFor(book);
         return book;
     }
@@ -205,8 +205,6 @@ public class JdbcBookRepository implements BookRepository {
         }
     }
 
-
-    @SuppressWarnings("ClassCanBeRecord")
     @RequiredArgsConstructor
     private static class BookResultSetExtractor implements ResultSetExtractor<Book> {
 
