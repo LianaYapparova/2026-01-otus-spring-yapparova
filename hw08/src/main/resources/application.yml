@@ -1,0 +1,22 @@
+spring:
+  data:
+    mongodb:
+      port: 27017
+      database: bookstore
+      host: localhost
+      username: admin
+      password: secret
+      authentication-database: admin
+      auto-index-creation: true
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.hw.changelog
+  mongo-db:
+    write-concern:
+      journal: true
+    read-concern: majority
