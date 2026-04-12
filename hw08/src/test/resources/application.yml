@@ -4,24 +4,12 @@ spring:
       port: 0 # when flapdoodle using
       database: bookstore
 
-
-
 de:
   flapdoodle:
     mongodb:
       embedded:
         version: 4.4.0
 
-#spring:
-#  data:
-#    mongodb:
-#      port: 27017
-#      database: bookstore
-#      host: localhost
-#      username: admin
-#      password: secret
-#      authentication-database: admin
-#      auto-index-creation: true
 
 mongock:
 #  runner-type: "ApplicationRunner" # default
