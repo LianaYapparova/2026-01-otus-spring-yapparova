@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+            background-color: beige;
+        }
+
+        .books {
+            border: 1px solid coral;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 2px solid coral;
+        }
+
+        .books td:last-child, td:first-child {
+            width: 50px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: coral;
+            color: white;
+            text-decoration: none;
+            margin: 30px 30px 30px 0px;;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" class="button">
+    На главную страницу
+</a>
+<a th:href="@{/authors}" class="button">
+    Авторы
+</a>
+<a th:href="@{/genres}" class="button">
+    Жанры
+</a>
+<a th:href="@{/create}" class="button">
+    Создать книгу
+</a>
+<h3>Books:</h3>
+<table class="books">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Edit book</th>
+        <th>Delete book</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
+<script>
+    fetch('/api/book')
+        .then(response => response.json())
+        .then(books => {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+            books.forEach(function(book) {
+                const row = document.createElement('tr');
+                const genreNames = book.genres.map(genre => genre.name).join(', ');
+                row.innerHTML = `
+                             <td>${book.id}</td>
+                             <td><a href="/book/${book.id}" target="_blank">${book.title}</a></td>
+                             <td>${book.author.fullName}</td>
+                             <td>${genreNames}</td>
+                             <td><a href="edit/${book.id}">Edit</a></td>
+                             <td> <button class="delete-btn" data-id="${book.id}">Delete</button></td>
+                 `;
+                tbody.appendChild(row);
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const bookId = e.target.dataset.id;
+                        try {
+                            const response = await fetch(`/api/book/${bookId}`, {
+                                method: 'DELETE'
+                            });
+                            if (response.ok) {
+                                e.target.closest('tr').remove();
+                            }
+                        } catch (error) {
+                            console.error('Ошибка удаления:', error);
+                        }
+                    });
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки:', error);
+        });
+
+
+</script>
+</body>
+</html>
