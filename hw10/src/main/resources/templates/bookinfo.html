@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+            background-color: beige;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: coral;
+            color: white;
+            text-decoration: none;
+            margin: 30px 30px 30px 0px;
+            border: 0px;
+        }
+
+    </style>
+</head>
+<body>
+<a th:href="@{/}" class="button">
+    На главную страницу
+</a>
+
+
+<div class="book-card">
+    <h2>Загрузка...</h2>
+    <p><strong>Author:</strong> <span>—</span></p>
+    <p><strong>Genres:</strong> <span>—</span></p>
+    <p><strong>Comments:</strong></p>
+    <ul>
+        <li>Загрузка комментариев...</li>
+    </ul>
+</div>
+
+
+<script>
+    const path = window.location.pathname;
+    const id = path.split('/').pop();
+    fetch(`/api/book/${id}`)
+        .then(response => response.json())
+        .then(book => {
+            const titleEl = document.querySelector('.book-card h2');
+            const authorSpan = document.querySelector('.book-card p:first-of-type span');
+            titleEl.textContent = book.title;
+            authorSpan.textContent = book.author.fullName;
+            const genresContainer = document.querySelector('.book-card p:nth-of-type(2) span');
+            const genreNames = book.genres.map(g => g.name).join(', ');
+            genresContainer.textContent = genreNames;
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки:', error);
+        });
+
+    fetch(`/api/comment/${id}`)
+        .then(response => response.json())
+        .then(comments => {
+            const ul = document.querySelector('.book-card ul');
+            ul.innerHTML = ''; // очищаем "Загрузка..."
+            comments.forEach(comment => {
+                    const li = document.createElement('li');
+                    li.textContent = comment.text;
+                    ul.appendChild(li);
+        })
+        .catch(error => {
+            const ul = document.querySelector('.book-card ul');
+            ul.innerHTML = `<li class="error">Ошибка загрузки комментариев: ${error.message}</li>`;
+        });
+    })
+
+
+</script>
+</body>
+</html>
