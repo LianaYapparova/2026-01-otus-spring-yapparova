@@ -32,7 +32,7 @@ public class BookRestController {
     private final CommentService commentService;
 
 
-    @GetMapping("/api/book")
+    @GetMapping("/api/books")
     public List<BookDto> listBookPage() {
         List<BookDto> books = bookService.findAll().stream()
                 .map(BookDto::fromDomainObject).toList();
@@ -64,9 +64,9 @@ public class BookRestController {
         return bookDto;
     }
 
-    @GetMapping("/api/comment/{id}")
-    public List<CommentDto> comments(@PathVariable("id") long id) {
-        List<CommentDto> commentDtos = commentService.findByBookId(id)
+    @GetMapping("/api/books/{bookId}/comments")
+    public List<CommentDto> comments(@PathVariable("bookId") long bookId) {
+        List<CommentDto> commentDtos = commentService.findByBookId(bookId)
                 .stream()
                 .map(CommentDto::fromDomainObject)
                 .toList();

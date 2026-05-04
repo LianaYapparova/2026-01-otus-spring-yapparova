@@ -56,7 +56,7 @@
             console.error('Ошибка загрузки:', error);
         });
 
-    fetch(`/api/comment/${id}`)
+    fetch(`/api/books/${id}/comments`)
         .then(response => response.json())
         .then(comments => {
             const ul = document.querySelector('.book-card ul');
