@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+            background-color: beige;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: coral;
+            color: white;
+            text-decoration: none;
+            margin: 30px 30px 30px 0px;
+            border: 0px;
+        }
+
+        .row {
+            margin: 30px 30px 30px 0px;;
+        }
+
+        #genres-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" class="button">
+    На главную страницу
+</a>
+
+<form id="edit-form">
+    <h3>Book Info:</h3>
+
+    <div class="row">
+        <label for="id-input">ID:</label>
+        <input id="id-input" type="text" readonly="readonly"/>
+    </div>
+
+    <div class="row">
+        <label>Title:</label>
+        <input id="title-input" name="title" type="text"/>
+    </div>
+
+    <div class="row">
+        <label>Author:</label>
+        <select id="author-select" name="authorId">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <div class="row">
+        <label>Genres:</label>
+        <div id="genres-container">
+        </div>
+    </div>
+
+    <div class="row">
+        <button type="submit" class="button">Save</button>
+        <button type="button" class="button" id="cancel-btn">Cancel</button>
+    </div>
+</form>
+<script>
+    const path = window.location.pathname;
+    const id = path.split('/').pop();
+    let bookData = null;
+
+    Promise.all([
+        fetch(`/api/book/${id}`).then(response => response.json()),
+        fetch('/api/authors').then(response => response.json()),
+        fetch('/api/genres').then(response => response.json())
+    ])
+        .then(([book, authors, genres]) => {
+            bookData = book;
+
+            document.getElementById('id-input').value = book.id;
+            document.getElementById('title-input').value = book.title;
+
+            const authorSelect = document.getElementById('author-select');
+            authorSelect.innerHTML = '<option value="">Select author</option>';
+
+            authors.forEach(author => {
+                const option = document.createElement('option');
+                option.value = author.id;
+                option.textContent = author.fullName;
+                if (author.id === book.author.id) {
+                    option.selected = true;
+                }
+                authorSelect.appendChild(option);
+            });
+
+            const genresContainer = document.getElementById('genres-container');
+            const bookGenreIds = book.genres.map(g => g.id);
+
+            genresContainer.innerHTML = '';
+            genres.forEach(genre => {
+                const label = document.createElement('label');
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'genreIds';
+                checkbox.value = genre.id;
+                checkbox.checked = bookGenreIds.includes(genre.id);
+
+                const span = document.createElement('span');
+                span.textContent = genre.name;
+
+                label.appendChild(checkbox);
+                label.appendChild(span);
+                genresContainer.appendChild(label);
+            });
+        })
+
+    document.getElementById('edit-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const bookData = {
+            id: parseInt(document.getElementById('id-input').value),
+            title: document.getElementById('title-input').value,
+            authorId: parseInt(document.getElementById('author-select').value),
+            genreIds: Array.from(document.querySelectorAll('input[name="genreIds"]:checked'))
+                .map(cb => parseInt(cb.value))
+        };
+
+        fetch(`/api/book/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(bookData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+</body>
+</html>
