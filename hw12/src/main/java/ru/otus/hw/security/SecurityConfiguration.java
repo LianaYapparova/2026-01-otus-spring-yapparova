@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,7 +31,7 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
-                .formLogin(fm ->fm.failureForwardUrl("/fail"));
+                .formLogin(fm -> fm.failureForwardUrl("/fail"));
         return http.build();
     }
 
