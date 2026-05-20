@@ -39,5 +39,6 @@ create table users
 (
     id       bigserial,
     username varchar(1500),
-    password varchar(1500)
+    password varchar(1500),
+    role varchar(20)
 );

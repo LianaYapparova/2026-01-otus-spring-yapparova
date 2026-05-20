@@ -17,6 +17,6 @@ insert into comments(text, book_id)
 values ('comment1', 1),   ('comment2', 1),
        ('comment3', 2),   ('comment4', 2);
 
-insert into users(username, password)
-values ('petrov', 'petrov'),
-       ('ivanov', 'ivanov');
+insert into users(username, password, role)
+values ('petrov', '$2a$10$CezVUiWcevWJytzRp/4VJu8AGLgWLaG1dVinP8RaM6JRqE7AT/ruy', 'ROLE_USER'),
+       ('ivanov', '$2a$10$WDdFiVm93UIcsYmPMWLUpeD6cuk4K7prcfBFXkZMWXNchbJ1VYwLe', 'ADMIN');
