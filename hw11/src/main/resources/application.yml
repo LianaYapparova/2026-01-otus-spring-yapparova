@@ -1,0 +1,15 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/bookstore
+    username: admin
+    password: secret
+
+  sql:
+    init:
+      mode: never
+
+  flyway:
+    locations: classpath:db/migration
+    user: admin
+    password: secret
+    url: jdbc:postgresql://localhost:5432/bookstore

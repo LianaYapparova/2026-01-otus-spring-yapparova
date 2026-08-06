@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+            background-color: beige;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: coral;
+            color: white;
+            text-decoration: none;
+            margin: 30px 30px 30px 0px;
+            border: 0px;
+        }
+
+        .row {
+            margin: 30px 30px 30px 0px;;
+        }
+
+        #genres-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" class="button">
+    На главную страницу
+</a>
+
+<form id="create-form" action="createbook.html" th:method="post">
+    <div class="row">
+        <label>Title:</label>
+        <input id="title-input" name="title" type="text"/>
+    </div>
+
+    <div class="row">
+        <label>Author:</label>
+        <select id="author-select" name="authorId">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <div class="row">
+        <label>Genres:</label>
+        <div id="genres-container">
+        </div>
+    </div>
+
+    <div class="row">
+        <button type="submit" class="button">Save</button>
+        <a th:href="@{/}" class="button">
+            Cancel
+        </a>
+    </div>
+</form>
+<script>
+    Promise.all([
+        fetch('/api/authors').then(response => response.json()),
+        fetch('/api/genres').then(response => response.json())
+    ])
+        .then(([authors, genres]) => {
+
+            const authorSelect = document.getElementById('author-select');
+            authorSelect.innerHTML = '<option value="">Select author</option>';
+
+            authors.forEach(author => {
+                const option = document.createElement('option');
+                option.value = author.id;
+                option.textContent = author.fullName;
+                authorSelect.appendChild(option);
+            });
+
+            const genresContainer = document.getElementById('genres-container');
+
+
+            genresContainer.innerHTML = '';
+            genres.forEach(genre => {
+                const label = document.createElement('label');
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'genreIds';
+                checkbox.value = genre.id;
+
+                const span = document.createElement('span');
+                span.textContent = genre.name;
+
+                label.appendChild(checkbox);
+                label.appendChild(span);
+                genresContainer.appendChild(label);
+            });
+        })
+    document.getElementById('create-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const bookData = {
+            title: document.getElementById('title-input').value,
+            authorId: parseInt(document.getElementById('author-select').value),
+            genreIds: Array.from(document.querySelectorAll('input[name="genreIds"]:checked'))
+                .map(cb => parseInt(cb.value))
+        };
+
+        fetch(`/api/book`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(bookData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+</body>
+</html>
