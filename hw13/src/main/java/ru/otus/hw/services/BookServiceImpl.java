@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -46,6 +44,7 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Book insert(String title, long authorId, Set<Long> genresIds) {
         return save(0, title, authorId, genresIds);
     }
@@ -65,6 +64,8 @@ public class BookServiceImpl implements BookService {
     }
 
     private Book save(long id, String title, long authorId, Set<Long> genresIds) {
+        var isNewBook = id == 0;
+
         if (isEmpty(genresIds)) {
             throw new IllegalArgumentException("Genres ids must not be null");
         }
@@ -78,7 +79,9 @@ public class BookServiceImpl implements BookService {
 
         var book = new Book(id, title, author, genres);
         book = bookRepository.save(book);
-        aclServiceWrapperService.createPermission(book, BasePermission.READ);
+        if (isNewBook) {
+            aclServiceWrapperService.createPermission(book, BasePermission.READ);
+        }
         return book;
     }
 }

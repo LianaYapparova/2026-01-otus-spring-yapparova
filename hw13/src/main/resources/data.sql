@@ -33,7 +33,7 @@ values ('comment1', 1),
 insert into users(username, password, role)
 values ('petrov', '$2a$10$CezVUiWcevWJytzRp/4VJu8AGLgWLaG1dVinP8RaM6JRqE7AT/ruy', 'USER'),
        ('ivanov', '$2a$10$WDdFiVm93UIcsYmPMWLUpeD6cuk4K7prcfBFXkZMWXNchbJ1VYwLe', 'USER'),
-       ('administrator', '', 'ROLE_ADMIN');
+       ('administrator', '$2a$10$.AHVqQbXjLJU1b7RFvVfMOyiA7cgi/SUs/DMVud6HYsQBu6VtY2.2', 'ADMIN');
 
 
 INSERT INTO acl_class (id, class)
@@ -44,7 +44,8 @@ INSERT INTO acl_sid (id, principal, sid)
 VALUES
     (1, TRUE, 'petrov'),
     (2, TRUE, 'ivanov'),
-    (3, FALSE, 'ROLE_ADMIN');
+    (3, FALSE, 'ROLE_ADMIN'),
+    (4, TRUE, 'administrator');
 
 
 INSERT INTO acl_object_identity (
@@ -74,9 +75,23 @@ INSERT INTO acl_entry (
 VALUES
     (1, 1, 1, 1, 1, TRUE, TRUE, TRUE),
     (2, 1, 2, 3, 16, TRUE, TRUE, TRUE),
+    (7, 1, 3, 3, 1, TRUE, TRUE, TRUE),
+    (10, 1, 4, 3, 2, TRUE, TRUE, TRUE),
+    (13, 1, 5, 3, 8, TRUE, TRUE, TRUE),
 
     (3, 2, 1, 1, 1, TRUE, TRUE, TRUE),
     (4, 2, 2, 3, 16, TRUE, TRUE, TRUE),
+    (8, 2, 3, 3, 1, TRUE, TRUE, TRUE),
+    (11, 2, 4, 3, 2, TRUE, TRUE, TRUE),
+    (14, 2, 5, 3, 8, TRUE, TRUE, TRUE),
 
     (5, 3, 1, 2, 1, TRUE, TRUE, TRUE),
-    (6, 3, 2, 3, 16, TRUE, TRUE, TRUE);
+    (6, 3, 2, 3, 16, TRUE, TRUE, TRUE),
+    (9, 3, 3, 3, 1, TRUE, TRUE, TRUE),
+    (12, 3, 4, 3, 2, TRUE, TRUE, TRUE),
+    (15, 3, 5, 3, 8, TRUE, TRUE, TRUE);
+
+ALTER TABLE acl_class ALTER COLUMN id RESTART WITH 2;
+ALTER TABLE acl_sid ALTER COLUMN id RESTART WITH 5;
+ALTER TABLE acl_object_identity ALTER COLUMN id RESTART WITH 4;
+ALTER TABLE acl_entry ALTER COLUMN id RESTART WITH 13;
