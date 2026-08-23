@@ -1,0 +1,34 @@
+spring:
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookstore
+    username: admin
+    password: secret
+#    driver-class-name: org.postgresql.Driver
+
+  sql:
+    init:
+      mode: never
+
+  flyway:
+    locations: classpath:db/migration
+    user: admin
+    password: secret
+    url: jdbc:postgresql://localhost:5432/bookstore
+
+  data:
+    mongodb:
+      port: 27017
+      database: bookstore
+      host: localhost
+      username: admin
+      password: secret
+      authentication-database: admin
+      auto-index-creation: true
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
