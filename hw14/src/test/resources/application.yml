@@ -1,0 +1,42 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.shell.boot.StandardCommandsAutoConfiguration
+  shell:
+    interactive:
+      enabled: false
+    noninteractive:
+      enabled: false
+  data:
+    mongodb:
+#      port: 0
+      auto-index-creation: true
+      database: bookstore
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      schema-locations: classpath:schema.sql
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+
+  flyway:
+    enabled: false
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.4.0
